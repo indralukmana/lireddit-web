@@ -5,23 +5,23 @@ import { useRouter } from 'next/router';
 import * as React from 'react';
 import InputField from '../components/InputField';
 import Wrapper from '../components/Wrapper';
-import { useRegisterMutation } from '../generated/graphql';
+import { useLoginMutation, useRegisterMutation } from '../generated/graphql';
 import { toErrorMap } from '../utils/toErrorMap';
 
-type RegisterProps = {};
+type LoginPageProps = {};
 
-const RegisterPage: NextPage<RegisterProps> = ({}) => {
-  const [{}, register] = useRegisterMutation();
+const LoginPage: NextPage<LoginPageProps> = ({}) => {
+  const [{}, login] = useLoginMutation();
   const router = useRouter();
   return (
     <Wrapper>
       <Formik
         initialValues={{ username: '', password: '' }}
         onSubmit={async (values, { setErrors }) => {
-          const registerResponse = await register(values);
-          if (registerResponse.data?.register.errors) {
-            setErrors(toErrorMap(registerResponse.data.register.errors));
-          } else if (registerResponse.data?.register.user) {
+          const registerResponse = await login({ options: values });
+          if (registerResponse.data?.login.errors) {
+            setErrors(toErrorMap(registerResponse.data.login.errors));
+          } else if (registerResponse.data?.login.user) {
             router.push('/');
           }
         }}
@@ -45,7 +45,7 @@ const RegisterPage: NextPage<RegisterProps> = ({}) => {
               type='submit'
               isLoading={isSubmitting}
             >
-              Register
+              Login
             </Button>
           </Form>
         )}
@@ -54,4 +54,4 @@ const RegisterPage: NextPage<RegisterProps> = ({}) => {
   );
 };
 
-export default RegisterPage;
+export default LoginPage;
