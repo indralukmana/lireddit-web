@@ -1,18 +1,32 @@
-import { Flex, Link } from '@chakra-ui/core';
+import { Button, Flex, Link } from '@chakra-ui/core';
 import * as React from 'react';
-import { useMeQuery } from '../generated/graphql';
+import { useLogoutMutation, useMeQuery } from '../generated/graphql';
 import NextLink from 'next/link';
 
 const NavBar = () => {
+  const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
   const [{ data, fetching }] = useMeQuery();
 
   let body = null;
 
+  console.log(data);
+
   if (fetching) {
     body = <p>Loading</p>;
-  } else if (data?.me?.username) {
-    body = <p>{data.me.username}</p>;
-  } else {
+  } else if (data?.me) {
+    body = (
+      <>
+        <p>{data.me.username}</p>
+        <Button
+          onClick={() => logout()}
+          variant='link'
+          isLoading={logoutFetching}
+        >
+          Logout
+        </Button>
+      </>
+    );
+  } else if (!data?.me) {
     body = (
       <>
         <NextLink href='/login'>
