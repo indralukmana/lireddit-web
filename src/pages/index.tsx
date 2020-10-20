@@ -18,4 +18,4 @@ const IndexPage = () => {
   );
 };
 
-export default withUrqlClient(createUrqlClient, { ssr: false })(IndexPage);
+export default withUrqlClient(createUrqlClient, { ssr: true })(IndexPage);
