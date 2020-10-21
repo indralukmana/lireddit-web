@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/core';
+import { Button, Link } from '@chakra-ui/core';
 import { Form, Formik } from 'formik';
 import { NextPage } from 'next';
 import { withUrqlClient } from 'next-urql';
@@ -9,6 +9,7 @@ import Wrapper from '../components/Wrapper';
 import { useLoginMutation, useRegisterMutation } from '../generated/graphql';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import { toErrorMap } from '../utils/toErrorMap';
+import NextLink from 'next/link';
 
 type LoginPageProps = {};
 
@@ -52,6 +53,9 @@ const LoginPage: NextPage<LoginPageProps> = ({}) => {
           </Form>
         )}
       </Formik>
+      <NextLink href='forgot-password'>
+        <Link>Forgot Password?</Link>
+      </NextLink>
     </Wrapper>
   );
 };
