@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/core';
+import { Alert, AlertIcon, Button, Link } from '@chakra-ui/core';
 import { Form, Formik } from 'formik';
 import { GetServerSideProps, NextPage } from 'next';
 import { withUrqlClient } from 'next-urql';
@@ -9,10 +9,12 @@ import Wrapper from '../../components/Wrapper';
 import { useChangePasswordMutation } from '../../generated/graphql';
 import { createUrqlClient } from '../../utils/createUrqlClient';
 import { toErrorMap } from '../../utils/toErrorMap';
+import NextLink from 'next/link';
 
 type ChangePasswordPageProps = { token: string };
 
 const ChangePasswordPage: NextPage<ChangePasswordPageProps> = ({ token }) => {
+  const [tokenError, setTokenError] = React.useState('');
   const [{}, changePassword] = useChangePasswordMutation();
   const router = useRouter();
   return (
@@ -25,7 +27,15 @@ const ChangePasswordPage: NextPage<ChangePasswordPageProps> = ({ token }) => {
             newPassword: values.newPassword,
           });
           if (registerResponse.data?.changePassword.errors) {
-            setErrors(toErrorMap(registerResponse.data.changePassword.errors));
+            const errorMap = toErrorMap(
+              registerResponse.data.changePassword.errors
+            );
+
+            if ('token' in errorMap) {
+              setTokenError(errorMap.token);
+            }
+
+            setErrors(errorMap);
           } else if (registerResponse.data?.changePassword.user) {
             router.push('/');
           }
@@ -33,6 +43,17 @@ const ChangePasswordPage: NextPage<ChangePasswordPageProps> = ({ token }) => {
       >
         {({ isSubmitting }) => (
           <Form>
+            {tokenError && (
+              <Alert status='error'>
+                <AlertIcon />
+                {tokenError}
+                <NextLink href='forgot-password'>
+                  <Link ml='1ch' textDecoration='underline'>
+                    request token again
+                  </Link>
+                </NextLink>
+              </Alert>
+            )}
             <InputField
               label='New Password'
               name='newPassword'
@@ -45,7 +66,7 @@ const ChangePasswordPage: NextPage<ChangePasswordPageProps> = ({ token }) => {
               type='submit'
               isLoading={isSubmitting}
             >
-              Login
+              Change Password
             </Button>
           </Form>
         )}
