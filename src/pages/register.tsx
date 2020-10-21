@@ -18,9 +18,9 @@ const RegisterPage: NextPage<RegisterProps> = ({}) => {
   return (
     <Wrapper>
       <Formik
-        initialValues={{ username: '', password: '' }}
+        initialValues={{ username: '', email: '', password: '' }}
         onSubmit={async (values, { setErrors }) => {
-          const registerResponse = await register(values);
+          const registerResponse = await register({ options: values });
           if (registerResponse.data?.register.errors) {
             setErrors(toErrorMap(registerResponse.data.register.errors));
           } else if (registerResponse.data?.register.user) {
@@ -35,6 +35,7 @@ const RegisterPage: NextPage<RegisterProps> = ({}) => {
               name='username'
               placeholder='username'
             />
+            <InputField label='Email' name='email' placeholder='email' />
             <InputField
               label='Password'
               name='password'

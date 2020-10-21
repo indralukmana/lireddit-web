@@ -18,9 +18,9 @@ const LoginPage: NextPage<LoginPageProps> = ({}) => {
   return (
     <Wrapper>
       <Formik
-        initialValues={{ username: '', password: '' }}
+        initialValues={{ usernameOrEmail: '', password: '' }}
         onSubmit={async (values, { setErrors }) => {
-          const registerResponse = await login({ options: values });
+          const registerResponse = await login(values);
           if (registerResponse.data?.login.errors) {
             setErrors(toErrorMap(registerResponse.data.login.errors));
           } else if (registerResponse.data?.login.user) {
@@ -31,9 +31,9 @@ const LoginPage: NextPage<LoginPageProps> = ({}) => {
         {({ isSubmitting }) => (
           <Form>
             <InputField
-              label='Username'
-              name='username'
-              placeholder='username'
+              label='Username or Email'
+              name='usernameOrEmail'
+              placeholder='username or email'
             />
             <InputField
               label='Password'
