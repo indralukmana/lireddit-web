@@ -25,7 +25,13 @@ const LoginPage: NextPage<LoginPageProps> = ({}) => {
           if (registerResponse.data?.login.errors) {
             setErrors(toErrorMap(registerResponse.data.login.errors));
           } else if (registerResponse.data?.login.user) {
-            router.push('/');
+            const next = router.query.next;
+
+            if (typeof next === 'string') {
+              router.push(next);
+            } else {
+              router.push('/');
+            }
           }
         }}
       >
