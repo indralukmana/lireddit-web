@@ -12,8 +12,6 @@ const NavBar = () => {
 
   let body = null;
 
-  console.log({ data });
-
   if (fetching) {
     body = <p>Loading</p>;
   } else if (data?.me) {
@@ -24,6 +22,7 @@ const NavBar = () => {
           onClick={() => logout()}
           variant='link'
           isLoading={logoutFetching}
+          ml='2ch'
         >
           Logout
         </Button>

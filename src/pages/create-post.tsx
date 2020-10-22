@@ -5,7 +5,7 @@ import { withUrqlClient } from 'next-urql';
 import { useRouter } from 'next/router';
 import * as React from 'react';
 import InputField from '../components/InputField';
-import Wrapper from '../components/Wrapper';
+import Layout from '../components/Layout';
 import { useCreatePostMutation } from '../generated/graphql';
 import { useAuth } from '../hooks/useAuth';
 import { createUrqlClient } from '../utils/createUrqlClient';
@@ -19,7 +19,7 @@ const CreatePostPage: NextPage<CreatePostPageProps> = ({}) => {
   useAuth();
 
   return (
-    <Wrapper>
+    <Layout>
       <Formik
         initialValues={{ title: '', text: '' }}
         onSubmit={async (values, {}) => {
@@ -50,7 +50,7 @@ const CreatePostPage: NextPage<CreatePostPageProps> = ({}) => {
           </Form>
         )}
       </Formik>
-    </Wrapper>
+    </Layout>
   );
 };
 
