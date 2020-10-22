@@ -11,12 +11,16 @@ import { createUrqlClient } from '../../utils/createUrqlClient';
 import { toErrorMap } from '../../utils/toErrorMap';
 import NextLink from 'next/link';
 
-type ChangePasswordPageProps = { token: string };
+type ChangePasswordPageProps = {};
 
-const ChangePasswordPage: NextPage<ChangePasswordPageProps> = ({ token }) => {
+const ChangePasswordPage: NextPage<ChangePasswordPageProps> = ({}) => {
   const [tokenError, setTokenError] = React.useState('');
   const [{}, changePassword] = useChangePasswordMutation();
   const router = useRouter();
+
+  const token =
+    typeof router.query.token === 'string' ? router.query.token : '';
+
   return (
     <Wrapper>
       <Formik
@@ -47,7 +51,7 @@ const ChangePasswordPage: NextPage<ChangePasswordPageProps> = ({ token }) => {
               <Alert status='error'>
                 <AlertIcon />
                 {tokenError}
-                <NextLink href='forgot-password'>
+                <NextLink href='/forgot-password'>
                   <Link ml='1ch' textDecoration='underline'>
                     request token again
                   </Link>
@@ -73,16 +77,6 @@ const ChangePasswordPage: NextPage<ChangePasswordPageProps> = ({ token }) => {
       </Formik>
     </Wrapper>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const token = context?.params?.token;
-
-  return {
-    props: {
-      token,
-    },
-  };
 };
 
 export default withUrqlClient(createUrqlClient, { ssr: false })(
