@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Link, Stack, Text } from '@chakra-ui/core';
+import { Box, Button, Flex, Heading, Link, Stack, Text } from '@chakra-ui/core';
 import { withUrqlClient } from 'next-urql';
 import { title } from 'process';
 import React from 'react';
@@ -8,10 +8,13 @@ import { createUrqlClient } from '../utils/createUrqlClient';
 import NextLink from 'next/link';
 
 const IndexPage = () => {
+  const [variables, setVariables] = React.useState({
+    limit: 40,
+    cursor: null as null | string,
+  });
+
   const [{ data, fetching: postsFetching }] = usePostsQuery({
-    variables: {
-      limit: 10,
-    },
+    variables,
   });
 
   return (
@@ -24,7 +27,7 @@ const IndexPage = () => {
       </Flex>
       <Stack>
         {data
-          ? data.posts.map((post) => (
+          ? data.posts.posts.map((post) => (
               <Box key={post.id} p={5} shadow='md' borderWidth='1px'>
                 <Heading fontSize='xl'>{post.title}</Heading>
                 <Text mt={4}>{post.textSnippet}</Text>
@@ -32,6 +35,21 @@ const IndexPage = () => {
             ))
           : null}
       </Stack>
+      {data?.posts.hasMore && (
+        <Flex justify='center' align='center' marginY='10'>
+          <Button
+            onClick={() =>
+              setVariables({
+                limit: variables.limit,
+                cursor:
+                  data?.posts.posts[data.posts.posts.length - 1].createdAt,
+              })
+            }
+          >
+            Load More
+          </Button>
+        </Flex>
+      )}
     </Layout>
   );
 };
