@@ -9,7 +9,7 @@ import NextLink from 'next/link';
 
 const IndexPage = () => {
   const [variables, setVariables] = React.useState({
-    limit: 40,
+    limit: 10,
     cursor: null as null | string,
   });
 
