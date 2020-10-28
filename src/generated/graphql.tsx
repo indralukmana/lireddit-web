@@ -19,7 +19,7 @@ export type Query = {
   hello: Scalars['String'];
   posts: PaginatedPosts;
   post?: Maybe<Post>;
-  me?: Maybe<User>;
+  me?: Maybe<MeResponse>;
 };
 
 
@@ -50,6 +50,7 @@ export type Post = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   textSnippet: Scalars['String'];
+  userVoted?: Maybe<Scalars['Boolean']>;
 };
 
 export type User = {
@@ -61,6 +62,12 @@ export type User = {
   updatedAt: Scalars['DateTime'];
 };
 
+
+export type MeResponse = {
+  __typename?: 'MeResponse';
+  user: User;
+  posts: Array<Post>;
+};
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -140,6 +147,15 @@ export type UsernamePasswordInput = {
   email: Scalars['String'];
   password: Scalars['String'];
 };
+
+export type PostSnippetFragment = (
+  { __typename?: 'Post' }
+  & Pick<Post, 'id' | 'title' | 'creatorId' | 'createdAt' | 'textSnippet' | 'points' | 'userVoted'>
+  & { creator: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'username'>
+  ) }
+);
 
 export type RegularErrorFragment = (
   { __typename?: 'FieldError' }
@@ -240,8 +256,11 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 export type MeQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
-    { __typename?: 'User' }
-    & RegularUserFragment
+    { __typename?: 'MeResponse' }
+    & { user: (
+      { __typename?: 'User' }
+      & RegularUserFragment
+    ) }
   )> }
 );
 
@@ -258,15 +277,26 @@ export type PostsQuery = (
     & Pick<PaginatedPosts, 'hasMore'>
     & { posts: Array<(
       { __typename?: 'Post' }
-      & Pick<Post, 'id' | 'title' | 'creatorId' | 'createdAt' | 'textSnippet' | 'points'>
-      & { creator: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'username'>
-      ) }
+      & PostSnippetFragment
     )> }
   ) }
 );
 
+export const PostSnippetFragmentDoc = gql`
+    fragment PostSnippet on Post {
+  id
+  title
+  creatorId
+  createdAt
+  textSnippet
+  points
+  userVoted
+  creator {
+    id
+    username
+  }
+}
+    `;
 export const RegularErrorFragmentDoc = gql`
     fragment RegularError on FieldError {
   field
@@ -359,7 +389,9 @@ export function useRegisterMutation() {
 export const MeDocument = gql`
     query Me {
   me {
-    ...RegularUser
+    user {
+      ...RegularUser
+    }
   }
 }
     ${RegularUserFragmentDoc}`;
@@ -372,20 +404,11 @@ export const PostsDocument = gql`
   posts(limit: $limit, cursor: $cursor) {
     hasMore
     posts {
-      id
-      title
-      creatorId
-      createdAt
-      textSnippet
-      points
-      creator {
-        id
-        username
-      }
+      ...PostSnippet
     }
   }
 }
-    `;
+    ${PostSnippetFragmentDoc}`;
 
 export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<PostsQuery>({ query: PostsDocument, ...options });

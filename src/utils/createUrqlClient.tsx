@@ -88,13 +88,24 @@ export const createUrqlClient = (ssrExchange: any) => ({
                   return query;
                 } else {
                   return {
-                    me: result.register.user,
+                    me: {
+                      user: result.register.user!,
+                    },
                   };
                 }
               }
             );
           },
           login: (_result, args, cache) => {
+            const allFields = cache.inspectFields('Query');
+            const fieldInfos = allFields.filter(
+              (info) => info.fieldName === 'posts'
+            );
+
+            fieldInfos.forEach((fi) =>
+              cache.invalidate('Query', 'posts', fi.arguments || {})
+            );
+
             betterUpdateQuery<LoginMutation, MeQuery>(
               cache,
               { query: MeDocument },
@@ -104,7 +115,9 @@ export const createUrqlClient = (ssrExchange: any) => ({
                   return query;
                 } else {
                   return {
-                    me: result.login.user,
+                    me: {
+                      user: result.login.user!,
+                    },
                   };
                 }
               }

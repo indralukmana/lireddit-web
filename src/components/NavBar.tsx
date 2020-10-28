@@ -17,7 +17,7 @@ const NavBar = () => {
   } else if (data?.me) {
     body = (
       <>
-        <p>{data.me.username}</p>
+        <p>{data.me.user.username}</p>
         <Button
           onClick={() => logout()}
           variant='link'

@@ -31,13 +31,23 @@ const IndexPage = () => {
         {data
           ? data.posts.posts.map((post) => (
               <Box key={post.id} p='1.5em' shadow='md' borderWidth='1px'>
-                <Heading as='h2' size='md'>
-                  {post.title}
-                </Heading>
-                <Heading as='h3' size='sm' fontWeight='semibold'>
-                  written by {post.creator.username}
-                </Heading>
-                <Text mt={4}>{post.textSnippet}</Text>
+                <Flex>
+                  <Flex alignItems='center' flexDirection='column' m='1em'>
+                    <Text fontWeight='bold' color='grey'>
+                      {post.points}
+                    </Text>
+                    <Button>{post.userVoted ? 'Unvote' : 'Vote'}</Button>
+                  </Flex>
+                  <Box>
+                    <Heading as='h2' size='md'>
+                      {post.title}
+                    </Heading>
+                    <Heading as='h3' size='sm' fontWeight='semibold'>
+                      written by {post.creator.username}
+                    </Heading>
+                    <Text mt={4}>{post.textSnippet}</Text>
+                  </Box>
+                </Flex>
               </Box>
             ))
           : null}
