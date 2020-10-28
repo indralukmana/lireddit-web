@@ -19,8 +19,10 @@ const IndexPage = () => {
 
   return (
     <Layout>
-      <Flex alignItems='center'>
-        <Heading>Lireddit</Heading>
+      <Flex alignItems='center' mb='1em'>
+        <Heading as='h1' size='xl'>
+          Lireddit
+        </Heading>
         <NextLink href='/create-post'>
           <Link ml='auto'>Create Post</Link>
         </NextLink>
@@ -28,8 +30,13 @@ const IndexPage = () => {
       <Stack>
         {data
           ? data.posts.posts.map((post) => (
-              <Box key={post.id} p={5} shadow='md' borderWidth='1px'>
-                <Heading fontSize='xl'>{post.title}</Heading>
+              <Box key={post.id} p='1.5em' shadow='md' borderWidth='1px'>
+                <Heading as='h2' size='md'>
+                  {post.title}
+                </Heading>
+                <Heading as='h3' size='sm' fontWeight='semibold'>
+                  written by {post.creator.username}
+                </Heading>
                 <Text mt={4}>{post.textSnippet}</Text>
               </Box>
             ))
